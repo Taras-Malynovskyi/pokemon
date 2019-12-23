@@ -1,0 +1,26 @@
+.App{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.fitst{
+  flex: 1 0 20%; margin: 5px;
+}
+.second{
+  flex: 1 0 20%; margin: 5px;
+}
+.pokedex{
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  }
+.pokedex>   p {
+    text-align: center;
+    font-size: 8vh;
+    border: 1px solid black;
+   
+  
+}
+  
+
