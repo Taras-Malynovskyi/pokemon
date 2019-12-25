@@ -1,44 +1,38 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './form.css';
+
 class Form extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      number: 12,
+      visible: 12,
       isLoaded: false,
       items: [],
-      pokeName: [],
-    }
+    };
+
+    this.loadMore = this.loadMore.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
+
   componentDidMount() {
     this.gettingPokemon();
-    this.gettingPokemon1();
+  }
+  //load more items
+  loadMore() {
+    this.setState((prev) => {
+      return { visible: prev.visible + 8 };
+    });
+    console.log(this.state.visible);
   }
 
+// get 200 pokemons
   gettingPokemon = async () => {
-    for (let i = 1; i < this.state.number; i++) {
-      fetch(`https://pokeapi.co/api/v2/pokemon/${i}`)
-        .then(res => res.json())
-        .then(json => {
-          this.setState({
-            pokeName: json,
-            isLoaded: true,
-          });
-          console.log(this.state.pokeName)
-          // console.log(this.state.pokeName.name, this.state.pokeName.id )
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }
-
-  gettingPokemon1 = async () => {
-    fetch(`http://pokeapi.co/api/v2/pokemon/?limit=${this.state.number}`)
+    fetch(`http://pokeapi.co/api/v2/pokemon/?limit=200`)
       .then(res => res.json())
       .then(json => {
-        this.setState({ items: json.results, })
+        this.setState({ items: json.results, isLoaded: true, })
         console.log(this.state.items)
       })
       .catch((err) => {
@@ -46,32 +40,45 @@ class Form extends React.Component {
       });
   }
 
-  render() {
-    const { isLoaded, pokeName, items } = this.state;
+  // return id checked element
+  handleClick({ currentTarget }) {
+    console.log(currentTarget.id)
+    this.props.updateData(currentTarget.id);
+  }
 
-    if (!isLoaded)
+
+
+  render() {
+    if (this.state.isLoaded === false)
       return <div>Loading...</div>;
     return (
-      <div className="form" >
-        {items.map(item => (
-            <div className="card" className="form_item"  >
-              <img className="card-img-top" src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/` + item.url.split('/')[6] + `.png`} />
-              <div className="card-body">
-                <h3 className="card-title"> {item.name.charAt(0).toUpperCase() + item.name.slice(1)}</h3>
-                <a href="#" className="btn btn-primary">
-                 
-                    <p>
-                      {pokeName.height}
-                    </p>
+      <div  >
 
-                  
-                  </a>
+        <div className="form">
+          {this.state.items.slice(0, this.state.visible).map((item, index) => {
+            return (
+              <div className="card" className="form_item" key={index + 1} id={index + 1}
+                onClick={this.handleClick}
+              >
+                <img className="card-img-top" src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/` + item.url.split('/')[6] + `.png`} />
+                <div className="card-body">
+                  <h3 className="card-title"> {item.name.charAt(0).toUpperCase() + item.name.slice(1)}</h3>
+                </div>
               </div>
-            </div>
-        ))}
+
+            );
+          })}
+        </div>
+
+        <div className="form">
+          <button onClick={this.loadMore} type="button" className="btn btn-primary btn-lg btn-block load_more" >Load more</button>
+        </div>
 
       </div>
     );
   }
 }
 export default Form;
+
+
+
